@@ -38,14 +38,23 @@ void VulkanApp::initVulkan()
   std::cout << "Created Window Surface\n";
 
   device.create(instance, surface);
+
+  VmaAllocatorCreateInfo allocatorInfo{};
+  allocatorInfo.physicalDevice   = device.getPhysicalDevice();
+  allocatorInfo.device           = device.getDevice();
+  allocatorInfo.instance         = instance.getInstance();
+  allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_3;
+  vmaCreateAllocator(&allocatorInfo, &allocator);
+
   swapchain.createSwapChain(device, surface, window);
   swapchain.createImageViews(device);
   renderPass.createRenderPass(device, swapchain.getImageFormat());
   pipeline.createGraphicsPipeline(device, swapchain, renderPass);
   createFrameBuffers();
+  mesh.create(allocator);
 
   commands.createCommandPool(device);
-  commands.createCommandBuffers(device, swapchain, renderPass, pipeline, swapChainFramebuffers);
+  commands.createCommandBuffers(device, swapchain, renderPass, pipeline, swapChainFramebuffers, mesh);
   sync.createSyncObjects(device);
   
 }
@@ -102,7 +111,7 @@ void VulkanApp::recreateSwapChain()
   createFrameBuffers();
   commands.destroy(device);                // or free/reset CBs
   commands.createCommandPool(device);      // with RESET flag
-  commands.createCommandBuffers(device, swapchain, renderPass, pipeline, swapChainFramebuffers);
+  commands.createCommandBuffers(device, swapchain, renderPass, pipeline, swapChainFramebuffers, mesh);
 }
 
 
@@ -188,6 +197,8 @@ void VulkanApp::cleanup()
   destroyFrameBuffers();
   sync.destroy(device);
   commands.destroy(device);
+  mesh.destroy(allocator);
+  vmaDestroyAllocator(allocator);
   pipeline.destroy(device);
   renderPass.destroy(device);
   swapchain.destroy(device);

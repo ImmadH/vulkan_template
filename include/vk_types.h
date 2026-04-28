@@ -1,7 +1,9 @@
 #pragma once
 #include <optional>
 #include <vector>
+#include <array>
 #include <vulkan/vulkan_core.h>
+#include <glm/glm.hpp>
 struct QueueFamilyIndices 
 {
     std::optional<uint32_t> graphicsFamily;

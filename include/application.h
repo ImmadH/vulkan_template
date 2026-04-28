@@ -8,8 +8,10 @@
 #include "pipeline.h"
 #include "commands.h"
 #include "sync.h"
+#include "mesh.h"
 #include "GLFW/glfw3.h"
 #include <vulkan/vulkan_core.h>
+#include <vk_mem_alloc.h>
 
 //Application layer that will hold all vulkan related objects and windowing 
 //run will kinda be like vulkan tutorial
@@ -43,9 +45,11 @@ private:
   //VULKAN OBJECTS!
   VulkanInstance instance;
   VulkanDevice device;
+  VmaAllocator allocator = VK_NULL_HANDLE;
   VulkanSwapchain swapchain;
   VulkanRenderPass renderPass;
   VulkanPipeline pipeline;
+  VulkanMesh mesh;
   VulkanCommands commands;
   VulkanSync sync;
 

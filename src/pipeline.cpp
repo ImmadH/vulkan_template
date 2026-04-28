@@ -2,6 +2,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <algorithm>
+#include <array>
 #include <iostream>
 
 static std::vector<char> readFile(const std::string& filename)
@@ -56,9 +57,20 @@ void VulkanPipeline::createGraphicsPipeline(const VulkanDevice& device,
   VkPipelineShaderStageCreateInfo stages[] = { vertStage, fragStage };
 
   // fixed functions 
+  VkVertexInputBindingDescription bindingDesc{};
+  bindingDesc.binding   = 0;
+  bindingDesc.stride    = sizeof(Vertex);
+  bindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+  std::array<VkVertexInputAttributeDescription, 2> attrDescs{};
+  attrDescs[0] = {0, 0, VK_FORMAT_R32G32_SFLOAT,    offsetof(Vertex, pos)};   // layout(location = 0) in vec2 pos;
+  attrDescs[1] = {1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)}; // layout(location = 1) in vec3 color;
+
   VkPipelineVertexInputStateCreateInfo vertexInput{ VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
-  vertexInput.vertexBindingDescriptionCount   = 0;
-  vertexInput.vertexAttributeDescriptionCount = 0;
+  vertexInput.vertexBindingDescriptionCount   = 1;
+  vertexInput.pVertexBindingDescriptions      = &bindingDesc;
+  vertexInput.vertexAttributeDescriptionCount = (uint32_t)attrDescs.size();
+  vertexInput.pVertexAttributeDescriptions    = attrDescs.data();
 
   VkPipelineInputAssemblyStateCreateInfo inputAssemblerInfo{ VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
   inputAssemblerInfo.topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;

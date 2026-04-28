@@ -5,6 +5,7 @@
 #include "swapchain.h"
 #include "renderpass.h"
 #include "pipeline.h"
+#include "mesh.h"
 
 class VulkanCommands
 {
@@ -15,7 +16,8 @@ public:
                             const VulkanSwapchain& swapchain,
                             const VulkanRenderPass& renderPass,
                             const VulkanPipeline& pipeline,
-                            const std::vector<VkFramebuffer>& framebuffers);
+                            const std::vector<VkFramebuffer>& framebuffers,
+                            const VulkanMesh& mesh);
 
   void destroy(const VulkanDevice& device);
 

@@ -24,7 +24,8 @@ void VulkanCommands::createCommandBuffers(const VulkanDevice& device,
                                           const VulkanSwapchain& swapchain,
                                           const VulkanRenderPass& renderPass,
                                           const VulkanPipeline& pipeline,
-                                          const std::vector<VkFramebuffer>& framebuffers)
+                                          const std::vector<VkFramebuffer>& framebuffers,
+                                          const VulkanMesh& mesh)
 {
   commandBuffers.resize(framebuffers.size());
 
@@ -60,6 +61,10 @@ void VulkanCommands::createCommandBuffers(const VulkanDevice& device,
 
     vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipeline());
 
+    VkBuffer     vertexBuffers[] = { mesh.getVertexBuffer() };
+    VkDeviceSize offsets[]       = { 0 };
+    vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
     VkViewport viewport{};
     viewport.x  = 0.0f;
     viewport.y  = 0.0f;
@@ -74,7 +79,7 @@ void VulkanCommands::createCommandBuffers(const VulkanDevice& device,
     scissor.extent = swapchain.getExtent();
     vkCmdSetScissor(commandBuffers[i], 0, 1, &scissor);
 
-    vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+    vkCmdDraw(commandBuffers[i], mesh.getVertexCount(), 1, 0, 0);
 
     vkCmdEndRenderPass(commandBuffers[i]);
 

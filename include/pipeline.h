@@ -2,9 +2,18 @@
 #include <vulkan/vulkan_core.h>
 #include <vector>
 #include <string>
+#include <array>
+#include <glm/glm.hpp>
 #include "device.h"
 #include "swapchain.h"
 #include "renderpass.h"
+
+struct Vertex
+{
+    glm::vec2 pos;
+    glm::vec3 color;
+};
+
 class VulkanPipeline
 {
 public:
